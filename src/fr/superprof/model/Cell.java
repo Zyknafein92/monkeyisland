@@ -19,8 +19,15 @@ public class Cell {
         this.island = island;
     }
 
-    public Boolean canAccess(){
-        return false;
+    public Boolean canAccess() {
+        return this.type == EARTH;
+    }
+
+    public Boolean isAdjacent(Cell cell) {
+        return (cell.getRow() == this.row - 1 && cell.getCol() == this.col)
+                || (cell.getRow() == this.row + 1 && cell.getCol() == this.col)
+                || (cell.getRow() == this.row && cell.getCol() == this.col - 1)
+                || (cell.getRow() == this.row && cell.getCol() == this.col + 1);
     }
 
     @Override

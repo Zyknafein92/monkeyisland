@@ -13,6 +13,11 @@ public class CrazyMonkey extends Monkey {
     }
 
     @Override
+    public void behavior() {
+        //TODO
+    }
+
+    @Override
     public String toString() {
         return super.toString();
     }

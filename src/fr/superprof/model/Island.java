@@ -28,7 +28,7 @@ public class Island extends Observable {
     }
 
     public Cell getCell(int row, int col) {
-        return null;
+        return this.cells[row][col];
     }
 
     public void newGame() {

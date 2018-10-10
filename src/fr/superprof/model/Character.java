@@ -6,15 +6,21 @@ public abstract class Character {
 
     public Character(Cell cell) {
         this.cell = cell;
+        cell.setCharacter(this);
     }
 
-    public void moveTo(Cell cell){}
-
-    public Boolean canMove(){
-    return false;
+    public void moveTo(Cell cell) {
+        this.cell.setCharacter(null);
+        cell.setCharacter(this);
+        this.cell = cell;
     }
 
-    public void meetCharacter(Character character){}
+    public Boolean canMove(Cell cell) {
+        /* Test the limit of Island !*/
+        return cell.canAccess() && this.cell.isAdjacent(cell);
+    }
+
+    public void meetCharacter(Character character) {}
 
     @Override
     public String toString() {
