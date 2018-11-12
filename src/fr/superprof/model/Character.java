@@ -16,8 +16,11 @@ public abstract class Character {
     }
 
     public Boolean canMove(Cell cell) {
-        /* Test the limit of Island !*/
         return cell.canAccess() && this.cell.isAdjacent(cell);
+    }
+
+    public Cell getRelativeCell(Integer row, Integer col) {
+        return this.cell.getRelativeCell(row, col);
     }
 
     public void meetCharacter(Character character) {}

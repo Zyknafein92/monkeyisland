@@ -13,7 +13,7 @@ public class Rhum extends Item {
     }
 
     public String toStringWithId() {
-        return null;
+        return this.id + "-" + this.getVisibility();
     }
 
     @Override

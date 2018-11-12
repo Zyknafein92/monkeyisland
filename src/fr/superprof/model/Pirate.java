@@ -38,6 +38,21 @@ public class Pirate extends Character implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
+    }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getEnergy() {
+        return energy;
+    }
+
+    public void setEnergy(Integer energy) {
+        this.energy = energy;
     }
 }

@@ -10,45 +10,33 @@ public class CrazyMonkey extends Monkey {
         super(cell);
     }
 
-    public Cell getRandomAdjacentCell(Cell cell) {
-
-        int row, col, roll;
-        Cell adjacentCell = cell;
-        Random r = new Random();
-        roll = r.nextInt(4);
-
-        switch (roll) {
-            case 0:
-                row = cell.getRow() - SPEED;
-                col = cell.getCol();
-                break;
-            case 1:
-                row = cell.getRow() + SPEED;
-                col = cell.getCol();
-                break;
-            case 2:
-                row = cell.getRow();
-                col = cell.getCol() - SPEED;
-                break;
-            case 3:
-                row = cell.getRow();
-                col = cell.getCol() + SPEED;
-                break;
-            default:
-                break;
-        }
-            return adjacentCell;
-        }
-
+    public Cell getRandomAdjacentCell() {
+        Cell adjacent = null;
+        Random rand = new Random();
+        do {
+            switch (rand.nextInt(4)) {
+                case 0:
+                    adjacent = this.getRelativeCell(-1, 0);
+                    break;
+                case 1:
+                    adjacent = this.getRelativeCell(0, 1);
+                    break;
+                case 2:
+                    adjacent = this.getRelativeCell(1, 0);
+                    break;
+                case 3:
+                    adjacent = this.getRelativeCell(0, -1);
+                    break;
+                default:
+                    break;
+            }
+        } while (!this.canMove(adjacent));
+        return adjacent;
+    }
 
     @Override
     public void behavior() {
-     Cell moveCrazyMonkey = null;
-     do {
-         moveCrazyMonkey = getRandomAdjacentCell(this.getCell());
-         if(moveCrazyMonkey.canAccess() == false) moveCrazyMonkey = null;
-     } while(moveCrazyMonkey == null);
-     this.moveTo(moveCrazyMonkey);
+        this.moveTo(getRandomAdjacentCell());
     }
 
     @Override

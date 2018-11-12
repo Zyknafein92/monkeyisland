@@ -12,22 +12,34 @@ public class Cell {
     private Character character;
     private Island island;
 
-    public Cell(Integer row, Integer col, Island island) {
+    public Cell(Integer row, Integer col, Island island, Integer type) {
         this.row = row;
         this.col = col;
-        this.type = EARTH;
         this.island = island;
+        this.setType(type);
+    }
+
+    public Cell(Integer row, Integer col, Island island) {
+        this(row, col, island, EARTH);
+    }
+
+    public Cell(Integer row, Integer col) {
+        this(row, col, null);
     }
 
     public Boolean canAccess() {
-        return this.type == EARTH;
+        return this.type.equals(EARTH);
     }
 
     public Boolean isAdjacent(Cell cell) {
-        return (cell.getRow() == this.row - 1 && cell.getCol() == this.col)
-                || (cell.getRow() == this.row + 1 && cell.getCol() == this.col)
-                || (cell.getRow() == this.row && cell.getCol() == this.col - 1)
-                || (cell.getRow() == this.row && cell.getCol() == this.col + 1);
+        return (cell.getRow().equals(this.row - 1) && cell.getCol().equals(this.col))
+                || (cell.getRow().equals(this.row + 1) && cell.getCol().equals(this.col))
+                || (cell.getRow().equals(this.row) && cell.getCol().equals(this.col - 1))
+                || (cell.getRow().equals(this.row) && cell.getCol().equals(this.col + 1));
+    }
+
+    public Cell getRelativeCell(Integer row, Integer col) {
+        return this.island.getCell(this, row, col);
     }
 
     @Override
@@ -56,7 +68,7 @@ public class Cell {
     }
 
     public void setType(Integer type) {
-        this.type = type;
+        this.type = type.equals(WATER) ? WATER : EARTH;
     }
 
     public Item getItem() {

@@ -10,10 +10,11 @@ public abstract class Item {
         this.cell = cell;
         this.visibility = true;
         this.found = false;
+        cell.setItem(this);
     }
 
     public Integer getVisibility(){
-        return null;
+        return visibility ? 1 : 0;
     }
 
     public Boolean isHidden(){
@@ -26,7 +27,7 @@ public abstract class Item {
 
     @Override
     public String toString() {
-        return super.toString();
+        return this.cell.getRow() + "-" + this.cell.getCol();
     }
 
     public void setVisibility(Boolean visibility) {
