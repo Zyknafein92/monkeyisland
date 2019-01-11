@@ -1,10 +1,12 @@
 package fr.superprof.model;
 
+import fr.superprof.MonkeyIsland;
+
 import java.util.Random;
 
 public class HunterMonkey extends Monkey {
 
-    public static final Integer SPEED = 1;
+    public static final Integer SPEED = Integer.valueOf(MonkeyIsland.CONFIG.getString("HUNTER_MONKEY_SPEED"));
 
     private Pirate target;
 
@@ -64,7 +66,7 @@ public class HunterMonkey extends Monkey {
     }
 
     @Override
-    public void behavior() {
+    public void run() {
         this.target = getCloserTarget();
         if (this.target != null) {
             this.moveTo(getCloserPathToTarget());

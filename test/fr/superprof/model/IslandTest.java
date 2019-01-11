@@ -13,7 +13,6 @@ public class IslandTest {
 
     @Before
     public void setUp() throws Exception {
-        System.out.println();
         island = Island.getInstance();
         //TODO : CLEAR
     }
@@ -51,7 +50,7 @@ public class IslandTest {
     public void getRhums() {
         List<Rhum> rhums = new ArrayList<>();
         Cell cellRhum = island.getCell(2,2);
-        Rhum rhum = new Rhum(cellRhum,1);
+        Rhum rhum = new Rhum(cellRhum);
         rhums.add(rhum);
         assertArrayEquals(rhums.toArray(), island.getRhums().toArray());
     }
@@ -78,6 +77,11 @@ public class IslandTest {
                 }
             }
         }
+    }
+
+    @Test
+    public void asciiTest() {
+        System.out.println(island.getAscii());
     }
 
     @Test
@@ -132,6 +136,6 @@ public class IslandTest {
 
     @Test
     public void toStringTest() {
-        System.out.println(island);
+        assertFalse(true);
     }
 }

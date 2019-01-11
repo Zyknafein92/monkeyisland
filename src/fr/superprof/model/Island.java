@@ -2,8 +2,8 @@ package fr.superprof.model;
 
 import fr.superprof.MonkeyIsland;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class Island extends Observable {
 
@@ -16,7 +16,6 @@ public class Island extends Observable {
 
     private Island() {
         pirates = new HashMap<>();
-        this.initializeIsland();
     }
 
     private static class SingletonHolder {
@@ -52,7 +51,7 @@ public class Island extends Observable {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
                 Character character = cells[i][j].getCharacter();
-                if (character != null && cls.isInstance(character)) {
+                if (cls.isInstance(character)) {
                     monkeys.add((Monkey)character);
                 }
             }
@@ -75,13 +74,13 @@ public class Island extends Observable {
 
     public void initializeIsland() {
         this.initializeCells();
-        this.initializeCrazyMonkey();
-        this.initializeHunterMonkey();
-        this.initializeTreasure();
-        this.initializeRhum();
+        this.initializeElements("ISLAND_TREASURE", Treasure.class);
+        this.initializeElements("ISLAND_RHUM", Rhum.class);
+        this.initializeElements("ISLAND_CRAZY_MONKEY", CrazyMonkey.class);
+        this.initializeElements("ISLAND_HUNTER_MONKEY", HunterMonkey.class);
     }
 
-    public void initializeCells() {
+    private void initializeCells() {
         String shape = MonkeyIsland.CONFIG.getString("ISLAND_SHAPE");
         int[] shapes = Arrays.stream(shape.split("-")).mapToInt(Integer::parseInt).toArray();
         for(int i = 0; i < ROWS; i++) {
@@ -91,20 +90,39 @@ public class Island extends Observable {
         }
     }
 
-    public void initializeTreasure() {
-        //TODO + test
+    private void initializeTreasure() {
+        String position = MonkeyIsland.CONFIG.getString("ISLAND_TREASURE");
+        int[] treasures = Arrays.stream(position.split("-")).mapToInt(Integer::parseInt).toArray();
+        Cell cell = this.getCell(treasures[0], treasures[1]);
+        this.treasure = new Treasure(cell);
     }
 
-    public void initializeHunterMonkey() {
-        //TODO + test
-    }
-
-    public void initializeCrazyMonkey() {
-        //TODO + test
+    private void initializeElements(String configKey, Class<?> cls) {
+        String position = MonkeyIsland.CONFIG.getString(configKey);
+        int[] elements = Arrays.stream(position.split("-")).mapToInt(Integer::parseInt).toArray();
+        for(int i = 0; i < elements.length; i += 2) {
+            Cell cell = this.getCell(elements[i], elements[i + 1]);
+            try {
+                cls.getDeclaredConstructor(Cell.class).newInstance(cell);
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void initializeRhum() {
-        //TODO + test
+        String position = MonkeyIsland.CONFIG.getString("ISLAND_RHUM");
+        int[] rhums = Arrays.stream(position.split("-")).mapToInt(Integer::parseInt).toArray();
+        for(int i = 0; i < rhums.length; i += 2) {
+            Cell cell = this.getCell(rhums[i], rhums[i + 1]);
+            new Rhum(cell);
+        }
+    }
+
+    public void startMonkeys() {
+        for (Monkey monkey : this.getMonkeys(null)) {
+                monkey.exec();
+        }
     }
 
     public Cell getRandomVoidEarth() {
@@ -118,55 +136,80 @@ public class Island extends Observable {
         return cell;
     }
 
-    public Pirate addPirate(Pirate pirate){
-        pirates.put(pirate.getId(), pirate);
+    public Pirate addPirate(Integer id) {
+        Pirate pirate = this.pirates.get(id);
+        if (pirate == null) {
+            Cell cell = getRandomVoidEarth();
+            pirate = new Pirate(cell, id);
+        }
         return pirate;
     }
 
-    public Pirate addPirate(Integer id){
-        return null;
+    public Pirate removePirate(Integer id) {
+        return pirates.remove(id);
     }
 
-    public Pirate removePirate(Integer id){
-        return null;
-    }
-
-    public Pirate movePirate(int id, int moveX, int moveY) {
-        return null;
+    public Pirate movePirate(Integer id, Integer moveX, Integer moveY) throws PirateException {
+        Pirate pirate = pirates.get(id);
+        if (pirate == null) {
+            throw new NullPointerException("Pirate is not found from map.");
+        }
+        Cell cell = pirate.getRelativeCell(moveY, moveX);
+        if (!pirate.canMove(cell)) {
+            throw new PirateException("Pirate can't move!", pirate.getId());
+        }
+        pirate.moveTo(cell);
+        return pirate;
     }
 
     public void newGame() {
-
+        //TODO
     }
 
     public void notifyClients() {
+        //TODO
+    }
 
+    public String getAscii() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < ROWS; i++) {
+            sb.append("|");
+            for (int j = 0; j < COLS; j++) {
+                Cell cell = cells[i][j];
+                sb.append("_");
+                if (cell.getType().equals(Cell.WATER)) {
+                    sb.append("X|");
+                } else if (cell.getItem() instanceof Treasure) {
+                    sb.append("T|");
+                } else if (cell.getItem() instanceof Rhum) {
+                    sb.append("R|");
+                } else if (cell.getCharacter() instanceof Pirate) {
+                    sb.append("P|");
+                } else if (cell.getCharacter() instanceof CrazyMonkey) {
+                    sb.append("C|");
+                } else if (cell.getCharacter() instanceof HunterMonkey) {
+                    sb.append("H|");
+                } else {
+                    sb.append(" |");
+                }
+            }
+            sb.append("\n");
+
+        }
+        return sb.toString();
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        sb.append(ROWS).append(" ").append(COLS).append(" ");
         for (int i = 0; i < ROWS; i++) {
-            sb.append("|");
             for (int j = 0; j < COLS; j++) {
-               Cell cell = cells[i][j];
-               if (cell.getType().equals(Cell.WATER)) {
-                   sb.append("X|");
-               } else if (cell.getItem() instanceof Treasure) {
-                   sb.append("T|");
-               } else if (cell.getItem() instanceof Rhum) {
-                   sb.append("R|");
-               } else if (cell.getCharacter() instanceof Pirate) {
-                   sb.append("P|");
-               } else if (cell.getCharacter() instanceof CrazyMonkey) {
-                   sb.append("C|");
-               } else if (cell.getCharacter() instanceof HunterMonkey) {
-                   sb.append("H|");
-               } else {
-                   sb.append(" |");
-               }
+                sb.append(this.getCell(i, j).getType()).append("-");
             }
-            sb.append("\n");
+        }
+        if (sb.length() > 0) {
+            sb.deleteCharAt(sb.length() - 1);
         }
         return sb.toString();
     }
@@ -187,11 +230,7 @@ public class Island extends Observable {
         this.pirates = pirates;
     }
 
-    public Treasure getTreasure() {
-        return treasure;
-    }
+    public Treasure getTreasure() {return treasure;}
 
-    public void setTreasure(Treasure treasure) {
-        this.treasure = treasure;
-    }
+    public void setTreasure(Treasure treasure) { this.treasure = treasure; }
 }

@@ -9,10 +9,16 @@ public abstract class Character {
         cell.setCharacter(this);
     }
 
+    abstract public void meetCharacter(Character character);
+
+    abstract public void foundItem(Item item);
+
     public void moveTo(Cell cell) {
         this.cell.setCharacter(null);
-        cell.setCharacter(this);
+        this.meetCharacter(cell.getCharacter());
+        this.foundItem(cell.getItem());
         this.cell = cell;
+        this.cell.setCharacter(this);
     }
 
     public Boolean canMove(Cell cell) {
@@ -23,11 +29,9 @@ public abstract class Character {
         return this.cell.getRelativeCell(row, col);
     }
 
-    public void meetCharacter(Character character) {}
-
     @Override
     public String toString() {
-        return super.toString();
+        return this.cell.toString();
     }
 
     public Cell getCell() {

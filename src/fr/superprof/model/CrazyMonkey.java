@@ -1,10 +1,12 @@
 package fr.superprof.model;
 
+import fr.superprof.MonkeyIsland;
+
 import java.util.Random;
 
 public class CrazyMonkey extends Monkey {
 
-    public static final Integer SPEED = 1;
+    public static final Integer SPEED = Integer.valueOf(MonkeyIsland.CONFIG.getString("CRAZY_MONKEY_SPEED"));
 
     public CrazyMonkey(Cell cell) {
         super(cell);
@@ -35,7 +37,7 @@ public class CrazyMonkey extends Monkey {
     }
 
     @Override
-    public void behavior() {
+    public void run() {
         this.moveTo(getRandomAdjacentCell());
     }
 

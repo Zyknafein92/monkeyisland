@@ -44,7 +44,7 @@ public class Cell {
 
     @Override
     public String toString() {
-        return super.toString();
+        return this.col + "-" + this.row;
     }
 
     public Integer getRow() {

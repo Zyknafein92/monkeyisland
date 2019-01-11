@@ -9,6 +9,8 @@ import static org.junit.Assert.*;
 
 public class CrazyMonkeyTest {
 
+    //TODO: TEST CRAZY LIKE HUNTER
+
     private Island island;
     private Cell monkeyCell;
     private CrazyMonkey monkey;

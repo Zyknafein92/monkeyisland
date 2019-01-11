@@ -27,7 +27,7 @@ public abstract class Item {
 
     @Override
     public String toString() {
-        return this.cell.getRow() + "-" + this.cell.getCol();
+        return this.cell.toString();
     }
 
     public void setVisibility(Boolean visibility) {
