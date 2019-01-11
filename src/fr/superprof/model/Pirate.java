@@ -1,16 +1,29 @@
 package fr.superprof.model;
 
 import fr.superprof.MonkeyIsland;
+import fr.superprof.network.Communication;
+
+import java.io.IOException;
+import java.net.Socket;
 import java.util.Observable;
 import java.util.Observer;
 
-public class Pirate extends Character implements Observer {
+public class Pirate extends Character implements Observer, Runnable {
 
     public static final Integer MAX_ENERGY = Integer.valueOf(MonkeyIsland.CONFIG.getString("PIRATE_MAX_ENERGY"));
 
     private Integer id;
     private Integer energy;
-    private Cell cell;
+    private Communication com;
+
+    public Pirate(Cell cell, Socket socket) {
+        this(cell, socket.getPort());
+        try {
+            this.com = new Communication(socket);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public Pirate(Cell cell, Integer id) {
         super(cell);
@@ -70,6 +83,13 @@ public class Pirate extends Character implements Observer {
         //TODO
     }
 
+    @Override
+    public void run() {
+        this.com.onConnection();
+        this.com.onListening();
+        this.com.onDisconnection();
+    }
+
     public Integer getId() {
         return id;
     }
@@ -84,5 +104,13 @@ public class Pirate extends Character implements Observer {
 
     public void setEnergy(Integer energy) {
         this.energy = energy;
+    }
+
+    public Communication getCom() {
+        return com;
+    }
+
+    public void setCom(Communication com) {
+        this.com = com;
     }
 }

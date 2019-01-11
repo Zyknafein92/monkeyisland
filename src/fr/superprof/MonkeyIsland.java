@@ -14,7 +14,7 @@ public class MonkeyIsland {
     public static void main(String[] args) throws IOException {
         Island island = Island.getInstance();
         island.initializeIsland();
-        island.startMonkeys();
+//        island.startMonkeys();
         Server.listen();
     }
 }

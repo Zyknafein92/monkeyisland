@@ -3,6 +3,7 @@ package fr.superprof.model;
 import fr.superprof.MonkeyIsland;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.Socket;
 import java.util.*;
 
 public class Island extends Observable {
@@ -136,11 +137,12 @@ public class Island extends Observable {
         return cell;
     }
 
-    public Pirate addPirate(Integer id) {
-        Pirate pirate = this.pirates.get(id);
+    public Pirate addPirate(Socket socket) {
+        Pirate pirate = this.pirates.get(socket.getPort());
         if (pirate == null) {
             Cell cell = getRandomVoidEarth();
-            pirate = new Pirate(cell, id);
+            pirate = new Pirate(cell, socket);
+            this.pirates.put(pirate.getId(), pirate);
         }
         return pirate;
     }

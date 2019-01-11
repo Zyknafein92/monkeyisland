@@ -21,20 +21,29 @@ public class Command {
         return new Command(CommandEnum.fromString(array[0]), array[1]);
     }
 
+    /* COMMAND CLIENT - SERVER */
+
     public static void movePirate(Integer pirateId, String body) {
+        String message = null;
         Island island = Island.getInstance();
         int[] values = Stream.of(body.split(" ")).mapToInt(Integer::valueOf).toArray();
         try {
             island.movePirate(pirateId, values[0], values[1]);
-            //TODO: Emit ALLOW_MOVE_PIRATE
+            message = allowMovePirate(island.getPirates().get(pirateId));
         } catch (PirateException e) {
-            //TODO: Emit DENY_MOVE_PIRATE
+            message = denyMovePirate();
+        } finally {
+            if (message != null) {
+                island.getPirates().get(pirateId).getCom().emit(message);
+            }
         }
     }
 
     public static void suscribePirate() {
-        // TODO
+        // HAVE ALREADY DONE !!! :))
     }
+
+    /* COMMAND SERVER - CLIENT */
 
     public static String identifyPirate(Pirate pirate) {
         return CommandEnum.PIRATE + " " + pirate.toStringWithEnergyAndId();
