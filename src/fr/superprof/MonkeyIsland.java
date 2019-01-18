@@ -1,7 +1,6 @@
 package fr.superprof;
 
 import fr.superprof.model.Island;
-import fr.superprof.model.Pirate;
 import fr.superprof.network.Server;
 
 import java.io.IOException;
@@ -14,7 +13,7 @@ public class MonkeyIsland {
     public static void main(String[] args) throws IOException {
         Island island = Island.getInstance();
         island.initializeIsland();
-//        island.startMonkeys();
+        island.startMonkeys();
         Server.listen();
     }
 }

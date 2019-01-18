@@ -1,6 +1,7 @@
 package fr.superprof.network;
 
 import fr.superprof.command.Command;
+import fr.superprof.model.Island;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,14 +36,11 @@ public class Communication {
     }
 
     public void onConnection() {
-        //TODO AXEL
-        /**
-         * Envoyer les données suivantes:
-         * - Island
-         * - Pirates
-         * - Monkeys
-         * - Rhums
-         */
+        this.emit(Command.islandShape());
+        this.emit(Command.identifyPirates());
+        this.emit(Command.identifyHunterMonkeys());
+        this.emit(Command.identifyCrazyMonkeys());
+        this.emit(Command.identifyRhums());
     }
 
     public void onListening() {
@@ -56,21 +54,23 @@ public class Communication {
     }
 
     public void onDisconnection() {
-        //TODO AXEL
         System.err.println(this.toString() + " is disconnected!");
-        /**
-         * Supprimer le pirate de la map, coms, observer
-         */
+        Island.getInstance().removePirate(this.socket.getPort());
+        try {
+            this.socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void switchCommand(String message) {
         Command command = Command.valueOf(message);
         switch (command.getHeader()) {
             case CLIENT_SUBSCRIBE_PIRATE:
-                Command.suscribePirate();
+                Command.suscribePirate(this.socket.getPort());
                 break;
             case CLIENT_MOVE_PIRATE:
-                Command.movePirate(this.socket.getPort(), command.getBody());
+                Command.movePirateClient(this.socket.getPort(), command.getBody());
                 break;
             default:
                 System.err.println("Not implemented yet");

@@ -29,6 +29,12 @@ public abstract class Monkey extends Character implements Runnable {
     }
 
     @Override
+    public void moveTo(Cell cell) {
+        super.moveTo(cell);
+        Island.getInstance().notifyObservers(this);
+    }
+
+    @Override
     public void meetCharacter(Character character) {
         if (character instanceof Pirate) {
             Pirate pirate = (Pirate) character;

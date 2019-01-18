@@ -1,6 +1,7 @@
 package fr.superprof.model;
 
 import fr.superprof.MonkeyIsland;
+import fr.superprof.command.Command;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
@@ -139,16 +140,28 @@ public class Island extends Observable {
 
     public Pirate addPirate(Socket socket) {
         Pirate pirate = this.pirates.get(socket.getPort());
-        if (pirate == null) {
-            Cell cell = getRandomVoidEarth();
-            pirate = new Pirate(cell, socket);
-            this.pirates.put(pirate.getId(), pirate);
+        if (pirate != null) {
+            throw new NullPointerException("Pirate already exists from map.");
         }
+        Cell cell = getRandomVoidEarth();
+        pirate = new Pirate(cell, socket);
+        pirate.setStatus(PirateStatusEnum.ADD);
+        this.notifyObservers(pirate);
+        this.addObserver(pirate);
+        this.pirates.put(pirate.getId(), pirate);
         return pirate;
     }
 
     public Pirate removePirate(Integer id) {
-        return pirates.remove(id);
+        Pirate pirate = this.pirates.remove(id);
+        if (pirate == null) {
+            throw new NullPointerException("Pirate is not found from map.");
+        }
+        pirate.remove();
+        pirate.setStatus(PirateStatusEnum.REMOVE);
+        this.deleteObserver(pirate);
+        this.notifyObservers(pirate);
+        return pirate;
     }
 
     public Pirate movePirate(Integer id, Integer moveX, Integer moveY) throws PirateException {
@@ -161,14 +174,12 @@ public class Island extends Observable {
             throw new PirateException("Pirate can't move!", pirate.getId());
         }
         pirate.moveTo(cell);
+        pirate.setStatus(PirateStatusEnum.MOVE);
+        this.notifyObservers(pirate);
         return pirate;
     }
 
     public void newGame() {
-        //TODO
-    }
-
-    public void notifyClients() {
         //TODO
     }
 

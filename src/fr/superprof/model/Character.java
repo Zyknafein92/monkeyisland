@@ -29,6 +29,11 @@ public abstract class Character {
         return this.cell.getRelativeCell(row, col);
     }
 
+    public void remove() {
+        this.cell.setCharacter(null);
+        this.cell = null;
+    }
+
     @Override
     public String toString() {
         return this.cell.toString();

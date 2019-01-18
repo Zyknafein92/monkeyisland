@@ -23,7 +23,7 @@ public class Command {
 
     /* COMMAND CLIENT - SERVER */
 
-    public static void movePirate(Integer pirateId, String body) {
+    public static void movePirateClient(Integer pirateId, String body) {
         String message = null;
         Island island = Island.getInstance();
         int[] values = Stream.of(body.split(" ")).mapToInt(Integer::valueOf).toArray();
@@ -39,8 +39,10 @@ public class Command {
         }
     }
 
-    public static void suscribePirate() {
-        // HAVE ALREADY DONE !!! :))
+    public static void suscribePirate(Integer pirateId) {
+        Pirate pirate = Island.getInstance().getPirates().get(pirateId);
+        String message = identifyPirate(pirate);
+        Island.getInstance().getPirates().get(pirateId).getCom().emit(message);
     }
 
     /* COMMAND SERVER - CLIENT */
@@ -57,7 +59,7 @@ public class Command {
         return CommandEnum.ALLOW_MOVE_PIRATE + " " + pirate.toStringWithEnergy();
     }
 
-    public static String islandPirates() {
+    public static String identifyPirates() {
         Island island = Island.getInstance();
         StringBuilder sb = new StringBuilder();
         for (Pirate pirate : island.getPirates().values()) {
