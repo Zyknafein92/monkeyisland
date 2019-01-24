@@ -63,12 +63,12 @@ public class Command {
         Island island = Island.getInstance();
         StringBuilder sb = new StringBuilder();
         for (Pirate pirate : island.getPirates().values()) {
-            sb.append(pirate).append("-");
+            sb.append(pirate).append("___");
         }
         if (sb.length() > 0) {
-            sb.deleteCharAt(sb.length() - 1);
+            sb.delete(sb.length() - 3, sb.length());
         }
-        return CommandEnum.PIRATES + " " + sb.toString();
+        return CommandEnum.PIRATES + " " /*+ sb.toString()*/; //FIXME: comment
     }
 
     public static String newPirate(Pirate pirate) {
@@ -91,10 +91,10 @@ public class Command {
         Island island = Island.getInstance();
         StringBuilder sb = new StringBuilder();
         for(Monkey monkey : island.getMonkeys(cls)){
-            sb.append(monkey).append("-");
+            sb.append(monkey).append("___");
         }
         if (sb.length() > 0) {
-            sb.deleteCharAt(sb.length() - 1);
+            sb.delete(sb.length() - 3, sb.length());
         }
         return sb.toString();
     }
@@ -111,10 +111,10 @@ public class Command {
         Island island = Island.getInstance();
         StringBuilder sb = new StringBuilder();
         for(Item rhum: island.getRhums()) {
-            sb.append(rhum).append("-").append(rhum.getVisibility()).append("-");
+            sb.append(rhum).append("-").append(rhum.getVisibility()).append("___");
         }
         if (sb.length() > 0) {
-            sb.deleteCharAt(sb.length() - 1);
+            sb.delete(sb.length() - 3, sb.length());
         }
         return CommandEnum.RHUMS + " " + sb.toString();
     }

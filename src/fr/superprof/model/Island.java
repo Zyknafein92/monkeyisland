@@ -6,6 +6,8 @@ import fr.superprof.command.Command;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Island extends Observable {
 
@@ -103,7 +105,7 @@ public class Island extends Observable {
         String position = MonkeyIsland.CONFIG.getString(configKey);
         int[] elements = Arrays.stream(position.split("-")).mapToInt(Integer::parseInt).toArray();
         for(int i = 0; i < elements.length; i += 2) {
-            Cell cell = this.getCell(elements[i], elements[i + 1]);
+            Cell cell = this.getCell(elements[i + 1], elements[i]);
             try {
                 cls.getDeclaredConstructor(Cell.class).newInstance(cell);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
@@ -123,7 +125,8 @@ public class Island extends Observable {
 
     public void startMonkeys() {
         for (Monkey monkey : this.getMonkeys(null)) {
-                monkey.exec();
+            Executors.newSingleThreadScheduledExecutor()
+                    .scheduleAtFixedRate(monkey, 0, monkey.getMoveSpeed(), TimeUnit.SECONDS);
         }
     }
 
@@ -215,7 +218,7 @@ public class Island extends Observable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(ROWS).append(" ").append(COLS).append(" ");
+        sb.append(COLS).append(" ").append(ROWS).append(" ");
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
                 sb.append(this.getCell(i, j).getType()).append("-");

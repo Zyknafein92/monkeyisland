@@ -87,6 +87,8 @@ public class Pirate extends Character implements Observer, Runnable {
 
     @Override
     public void update(Observable o, Object arg) {
+        System.out.println("NOTIFY " + arg.getClass());//FIXME: comment
+
         if (arg instanceof Pirate) {
             Pirate pirate = (Pirate) arg;
             switch (pirate.getStatus()) {

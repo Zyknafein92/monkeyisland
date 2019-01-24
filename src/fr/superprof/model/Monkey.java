@@ -1,8 +1,5 @@
 package fr.superprof.model;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 public abstract class Monkey extends Character implements Runnable {
 
     private Integer moveSpeed;
@@ -18,11 +15,6 @@ public abstract class Monkey extends Character implements Runnable {
 
     abstract public void run();
 
-    public void exec() {
-        Executors.newSingleThreadScheduledExecutor()
-                .scheduleAtFixedRate(this, 0, this.moveSpeed, TimeUnit.SECONDS);
-    }
-
     @Override
     public Boolean canMove(Cell cell) {
         return super.canMove(cell) && !(cell.getCharacter() instanceof Monkey);
@@ -31,6 +23,7 @@ public abstract class Monkey extends Character implements Runnable {
     @Override
     public void moveTo(Cell cell) {
         super.moveTo(cell);
+        System.out.println("Oberservers : " + Island.getInstance().countObservers()); //FIXME: comment
         Island.getInstance().notifyObservers(this);
     }
 
