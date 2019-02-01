@@ -38,7 +38,6 @@ public class CrazyMonkey extends Monkey {
 
     @Override
     public void run() {
-        System.out.println("MOVE CRAZY"); //FIXME: comment
         this.moveTo(getRandomAdjacentCell());
     }
 

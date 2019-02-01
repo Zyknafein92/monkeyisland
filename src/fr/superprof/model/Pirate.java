@@ -77,7 +77,7 @@ public class Pirate extends Character implements Observer, Runnable {
             item.setVisibility(true);
             item.setFound(true);
         }
-        Island.getInstance().notifyObservers(item);
+        Island.getInstance().notify(item);
     }
 
     @Override
@@ -87,22 +87,22 @@ public class Pirate extends Character implements Observer, Runnable {
 
     @Override
     public void update(Observable o, Object arg) {
-        System.out.println("NOTIFY " + arg.getClass());//FIXME: comment
-
         if (arg instanceof Pirate) {
             Pirate pirate = (Pirate) arg;
-            switch (pirate.getStatus()) {
-                case ADD:
-                    this.com.emit(Command.newPirate(pirate));
-                    break;
-                case MOVE:
-                    this.com.emit(Command.movePirate(pirate));
-                    break;
-                case REMOVE:
-                    this.com.emit(Command.deletePirate(pirate));
-                    break;
-                default:
-                    break;
+            if (pirate != this) {
+                switch (pirate.getStatus()) {
+                    case ADD:
+                        this.com.emit(Command.newPirate(pirate));
+                        break;
+                    case MOVE:
+                        this.com.emit(Command.movePirate(pirate));
+                        break;
+                    case REMOVE:
+                        this.com.emit(Command.deletePirate(pirate));
+                        break;
+                    default:
+                        break;
+                }
             }
             pirate.setStatus(PirateStatusEnum.IDLE);
         } else  if (arg instanceof CrazyMonkey) {

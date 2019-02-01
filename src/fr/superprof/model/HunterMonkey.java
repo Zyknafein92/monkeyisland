@@ -33,28 +33,26 @@ public class HunterMonkey extends Monkey {
     }
 
     public Cell getCloserPathToTarget() {
-        Cell cell = null;
         Random rand = new Random();
-        Boolean direction;
 
-        if (this.target != null) {
-            if (this.getCell().getRow().equals(this.target.getCell().getRow())) {
-                direction = false;
-            } else if (this.getCell().getCol().equals(this.target.getCell().getCol())) {
-                direction = true;
-            } else {
-                direction = rand.nextBoolean();
-            }
+        Integer directionOnRow = Integer.signum(this.target.getCell().getRow() - this.getCell().getRow());
+        Integer directionOnCol = Integer.signum(this.target.getCell().getCol() - this.getCell().getCol());
 
-            if (direction) {
-                Integer sign = Integer.signum(this.target.getCell().getRow() - this.getCell().getRow());
-                cell = this.getRelativeCell(sign, 0);
-            } else {
-                Integer sign = Integer.signum(this.target.getCell().getCol() - this.getCell().getCol());
-                cell = this.getRelativeCell(0, sign);
-            }
+        Cell nextCellOnRow = this.getRelativeCell(directionOnRow, 0);
+        Cell nextCellOnCol = this.getRelativeCell(0, directionOnCol);
+
+        Boolean canMoveOnRow = directionOnRow != 0 && canMove(nextCellOnRow);
+        Boolean canMoveOnCol = directionOnCol != 0 && canMove(nextCellOnCol);
+
+        if (canMoveOnRow && canMoveOnCol) {
+            return rand.nextBoolean() ? nextCellOnRow : nextCellOnCol;
+        } else if (canMoveOnRow) {
+            return nextCellOnRow;
+        } else if (canMoveOnCol) {
+            return nextCellOnCol;
+        } else {
+            return this.getCell();
         }
-        return cell;
     }
 
     public Pirate getTarget() {

@@ -23,8 +23,7 @@ public abstract class Monkey extends Character implements Runnable {
     @Override
     public void moveTo(Cell cell) {
         super.moveTo(cell);
-        System.out.println("Oberservers : " + Island.getInstance().countObservers()); //FIXME: comment
-        Island.getInstance().notifyObservers(this);
+        Island.getInstance().notify(this);
     }
 
     @Override

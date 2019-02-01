@@ -77,11 +77,14 @@ public class Island extends Observable {
     }
 
     public void initializeIsland() {
+        String enableMonkeys = MonkeyIsland.CONFIG.getString("ENABLE_MONKEYS");
         this.initializeCells();
         this.initializeElements("ISLAND_TREASURE", Treasure.class);
         this.initializeElements("ISLAND_RHUM", Rhum.class);
-        this.initializeElements("ISLAND_CRAZY_MONKEY", CrazyMonkey.class);
-        this.initializeElements("ISLAND_HUNTER_MONKEY", HunterMonkey.class);
+        if (Boolean.valueOf(enableMonkeys)) {
+            this.initializeElements("ISLAND_CRAZY_MONKEY", CrazyMonkey.class);
+            this.initializeElements("ISLAND_HUNTER_MONKEY", HunterMonkey.class);
+        }
     }
 
     private void initializeCells() {
@@ -149,7 +152,7 @@ public class Island extends Observable {
         Cell cell = getRandomVoidEarth();
         pirate = new Pirate(cell, socket);
         pirate.setStatus(PirateStatusEnum.ADD);
-        this.notifyObservers(pirate);
+        this.notify(pirate);
         this.addObserver(pirate);
         this.pirates.put(pirate.getId(), pirate);
         return pirate;
@@ -163,7 +166,7 @@ public class Island extends Observable {
         pirate.remove();
         pirate.setStatus(PirateStatusEnum.REMOVE);
         this.deleteObserver(pirate);
-        this.notifyObservers(pirate);
+        this.notify(pirate);
         return pirate;
     }
 
@@ -178,12 +181,17 @@ public class Island extends Observable {
         }
         pirate.moveTo(cell);
         pirate.setStatus(PirateStatusEnum.MOVE);
-        this.notifyObservers(pirate);
+        this.notify(pirate);
         return pirate;
     }
 
     public void newGame() {
         //TODO
+    }
+
+    public void notify(Object arg) {
+        this.setChanged();
+        this.notifyObservers(arg);
     }
 
     public String getAscii() {
