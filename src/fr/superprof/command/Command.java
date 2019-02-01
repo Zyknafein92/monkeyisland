@@ -1,6 +1,7 @@
 package fr.superprof.command;
 
 import fr.superprof.model.*;
+import fr.superprof.network.Client;
 
 import java.util.stream.Stream;
 
@@ -23,26 +24,24 @@ public class Command {
 
     /* COMMAND CLIENT - SERVER */
 
-    public static void movePirateClient(Integer pirateId, String body) {
-        String message = null;
+    public static void movePirateClient(Client client, String body) {
         Island island = Island.getInstance();
         int[] values = Stream.of(body.split(" ")).mapToInt(Integer::valueOf).toArray();
         try {
-            island.movePirate(pirateId, values[0], values[1]);
-            message = allowMovePirate(island.getPirates().get(pirateId));
+            island.movePirate(client.getPirate(), values[0], values[1]);
+            client.emit(allowMovePirate(client.getPirate()));
         } catch (PirateException e) {
-            message = denyMovePirate();
-        } finally {
-            if (message != null) {
-                island.getPirates().get(pirateId).getCom().emit(message);
-            }
+            client.emit(denyMovePirate());
         }
     }
 
-    public static void suscribePirate(Integer pirateId) {
-        Pirate pirate = Island.getInstance().getPirates().get(pirateId);
+    public static void suscribePirate(Client client) {
+        Island island = Island.getInstance();
+        Cell cell = island.getRandomVoidEarth();
+        Pirate pirate = new Pirate(cell, client);
+        island.addPirate(pirate);
         String message = identifyPirate(pirate);
-        Island.getInstance().getPirates().get(pirateId).getCom().emit(message);
+        client.emit(message);
     }
 
     /* COMMAND SERVER - CLIENT */
@@ -68,7 +67,7 @@ public class Command {
         if (sb.length() > 0) {
             sb.delete(sb.length() - 3, sb.length());
         }
-        return CommandEnum.PIRATES + " " /*+ sb.toString()*/; //FIXME: comment
+        return CommandEnum.PIRATES + " " + sb.toString();
     }
 
     public static String newPirate(Pirate pirate) {
