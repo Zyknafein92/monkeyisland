@@ -2,6 +2,7 @@ package fr.superprof.model;
 
 import fr.superprof.MonkeyIsland;
 import fr.superprof.command.Command;
+import fr.superprof.network.Client;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
@@ -144,13 +145,10 @@ public class Island extends Observable {
         return cell;
     }
 
-    public Pirate addPirate(Socket socket) {
-        Pirate pirate = this.pirates.get(socket.getPort());
-        if (pirate != null) {
+    public Pirate addPirate(Pirate pirate) {
+        if (this.pirates.containsKey(pirate.getId())) {
             throw new NullPointerException("Pirate already exists from map.");
         }
-        Cell cell = getRandomVoidEarth();
-        pirate = new Pirate(cell, socket);
         pirate.setStatus(PirateStatusEnum.ADD);
         this.notify(pirate);
         this.addObserver(pirate);
@@ -170,11 +168,7 @@ public class Island extends Observable {
         return pirate;
     }
 
-    public Pirate movePirate(Integer id, Integer moveX, Integer moveY) throws PirateException {
-        Pirate pirate = pirates.get(id);
-        if (pirate == null) {
-            throw new NullPointerException("Pirate is not found from map.");
-        }
+    public Pirate movePirate(Pirate pirate, Integer moveX, Integer moveY) throws PirateException {
         Cell cell = pirate.getRelativeCell(moveY, moveX);
         if (!pirate.canMove(cell)) {
             throw new PirateException("Pirate can't move!", pirate.getId());

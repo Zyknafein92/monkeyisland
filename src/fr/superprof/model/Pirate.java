@@ -2,29 +2,26 @@ package fr.superprof.model;
 
 import fr.superprof.MonkeyIsland;
 import fr.superprof.command.Command;
-import fr.superprof.network.Communication;
+import fr.superprof.network.Client;
+import fr.superprof.network.Server;
 
-import java.io.IOException;
-import java.net.Socket;
+import java.security.PublicKey;
 import java.util.Observable;
 import java.util.Observer;
 
-public class Pirate extends Character implements Observer, Runnable {
+public class Pirate extends Character implements Observer {
 
     public static final Integer MAX_ENERGY = Integer.valueOf(MonkeyIsland.CONFIG.getString("PIRATE_MAX_ENERGY"));
 
     private Integer id;
     private Integer energy;
-    private Communication com;
     private PirateStatusEnum status;
+    private Client client;
 
-    public Pirate(Cell cell, Socket socket) {
-        this(cell, socket.getPort());
-        try {
-            this.com = new Communication(socket);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public Pirate(Cell cell, Client client) {
+        this(cell, client.getSocket().getPort());
+        this.client = client;
+        client.setPirate(this);
     }
 
     public Pirate(Cell cell, Integer id) {
@@ -92,13 +89,13 @@ public class Pirate extends Character implements Observer, Runnable {
             if (pirate != this) {
                 switch (pirate.getStatus()) {
                     case ADD:
-                        this.com.emit(Command.newPirate(pirate));
+                        this.client.emit(Command.newPirate(pirate));
                         break;
                     case MOVE:
-                        this.com.emit(Command.movePirate(pirate));
+                        this.client.emit(Command.movePirate(pirate));
                         break;
                     case REMOVE:
-                        this.com.emit(Command.deletePirate(pirate));
+                        this.client.emit(Command.deletePirate(pirate));
                         break;
                     default:
                         break;
@@ -106,45 +103,22 @@ public class Pirate extends Character implements Observer, Runnable {
             }
             pirate.setStatus(PirateStatusEnum.IDLE);
         } else  if (arg instanceof CrazyMonkey) {
-            this.com.emit(Command.identifyCrazyMonkeys());
+            this.client.emit(Command.identifyCrazyMonkeys());
         } else if (arg instanceof HunterMonkey) {
-            this.com.emit(Command.identifyHunterMonkeys());
+            this.client.emit(Command.identifyHunterMonkeys());
         } else if (arg instanceof Rhum) {
-            this.com.emit(Command.visibiltyRhum((Rhum) arg));
+            this.client.emit(Command.visibiltyRhum((Rhum) arg));
         } else if (arg instanceof Treasure) {
-            this.com.emit(Command.foundTreasure((Treasure) arg));
+            this.client.emit(Command.foundTreasure((Treasure) arg));
         }
-    }
-
-    @Override
-    public void run() {
-        this.com.onConnection();
-        this.com.onListening();
-        this.com.onDisconnection();
     }
 
     public Integer getId() {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getEnergy() {
-        return energy;
-    }
-
     public void setEnergy(Integer energy) {
         this.energy = energy;
-    }
-
-    public Communication getCom() {
-        return com;
-    }
-
-    public void setCom(Communication com) {
-        this.com = com;
     }
 
     public PirateStatusEnum getStatus() {
