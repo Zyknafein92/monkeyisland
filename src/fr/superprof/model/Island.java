@@ -151,6 +151,7 @@ public class Island extends Observable {
         }
         pirate.setStatus(PirateStatusEnum.ADD);
         this.notify(pirate);
+        pirate.setStatus(PirateStatusEnum.IDLE);
         this.addObserver(pirate);
         this.pirates.put(pirate.getId(), pirate);
         return pirate;
@@ -165,6 +166,7 @@ public class Island extends Observable {
         pirate.setStatus(PirateStatusEnum.REMOVE);
         this.deleteObserver(pirate);
         this.notify(pirate);
+        pirate.setStatus(PirateStatusEnum.IDLE);
         return pirate;
     }
 
@@ -176,6 +178,7 @@ public class Island extends Observable {
         pirate.moveTo(cell);
         pirate.setStatus(PirateStatusEnum.MOVE);
         this.notify(pirate);
+        pirate.setStatus(PirateStatusEnum.IDLE);
         return pirate;
     }
 

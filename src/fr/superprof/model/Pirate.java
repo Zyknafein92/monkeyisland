@@ -3,9 +3,6 @@ package fr.superprof.model;
 import fr.superprof.MonkeyIsland;
 import fr.superprof.command.Command;
 import fr.superprof.network.Client;
-import fr.superprof.network.Server;
-
-import java.security.PublicKey;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -101,7 +98,6 @@ public class Pirate extends Character implements Observer {
                         break;
                 }
             }
-            pirate.setStatus(PirateStatusEnum.IDLE);
         } else  if (arg instanceof CrazyMonkey) {
             this.client.emit(Command.identifyCrazyMonkeys());
         } else if (arg instanceof HunterMonkey) {
